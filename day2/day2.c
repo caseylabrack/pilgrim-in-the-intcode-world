@@ -1,3 +1,5 @@
+// https://adventofcode.com/2019/day/2
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -10,7 +12,7 @@ int intcode (int m[]);
 int main(int argc, char **argv)
 {
 	if(argc!=3) {
-		printf("Two arguments required: intcode string and part 2 input. \n");
+		printf("Two arguments expected: intcode string and part 2 input. \n");
 		return 0;
 	}
 
