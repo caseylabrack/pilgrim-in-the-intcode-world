@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	
 	int m[maxmemsize];
 	
-	// string to int array
+	// comma delim string to int array
 	char* toke = strtok(argv[1], ",");
 	int index = 0;
 	while(toke!=NULL) {
@@ -24,9 +24,10 @@ int main(int argc, char **argv)
 		toke = strtok(NULL, ",");
 	}
 	
-	int ptr = 0, instruction, param1, param2;
+	int ptr = 0, instruction, param1, param2, userinput;
 	char opcode[6], ins[3] = { ' ', ' ', (char)0};	
 	
+	// intcode go brrrr
 	while(1) {
 		
 		sprintf(opcode, "%05d", m[ptr]);
@@ -35,33 +36,52 @@ int main(int argc, char **argv)
 		sscanf(ins, "%d", &instruction);
 		
 		if(instruction==99) break;
+		
+		// char to int, then nonzero test
+		param1 = opcode[2] - '0' ? m[ptr+1] : m[m[ptr+1]]; 
+		param2 = opcode[1] - '0' ? m[ptr+2] : m[m[ptr+2]]; 
+			
+		switch(instruction) {
+			
+			case 1: 
+			m[m[ptr+3]] = param1 + param2;
+			ptr+=4;
+			break;
+			
+			case 2:
+			m[m[ptr+3]] = param1 * param2;
+			ptr+=4;
+			break;
 
-		if(instruction==3) { 
-			int userinput;
+			case 3:
 			printf("\nTEST INPUT: ");
 			scanf("%d", &userinput);
 			m[m[ptr+1]] = userinput;			
 			ptr+=2;
-		}
-		
-		param1 = opcode[2] - '0' ? m[ptr+1] : m[m[ptr+1]];
-
-		if(instruction==4) {
-			if(m[ptr+2]==99) printf("final "); 
+			break;
+			
+			case 4:
 			printf("output: %d\n", param1);
-			ptr+=2;			
-		}
-		
-		param2 = opcode[1] - '0' ? m[ptr+2] : m[m[ptr+2]];
-		
-		if(instruction==1) {
-			m[m[ptr+3]] = param1 + param2;
-			ptr+=4;
-		}
-		
-		if(instruction==2) {
-			m[m[ptr+3]] = param1 * param2;
-			ptr+=4;	
+			ptr+=2;		
+			break;
+			
+			case 5:
+			ptr = param1 ? param2 : ptr + 3;
+			break;
+			
+			case 6: 
+			ptr = param1 ? ptr + 3 : param2;
+			break;
+			
+			case 7:
+			m[m[ptr+3]] = param1 < param2 ? 1 : 0;
+			ptr += 4;
+			break;
+			
+			case 8:	
+			m[m[ptr+3]] = param1 == param2 ? 1 : 0;
+			ptr += 4;
+			break;		
 		}
 	}
 	
