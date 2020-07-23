@@ -1,6 +1,8 @@
 // https://adventofcode.com/2019/day/7
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "intcode.h"
 
 int main(int argc, char **argv)
@@ -13,11 +15,9 @@ int main(int argc, char **argv)
 	int userinput;
 	printf("\nTEST INPUT: ");
 	scanf("%d", &userinput);
-
 	
 	intcomp ampA = int_init(argv[1], userinput);
-	
-	int_exe(&ampA);
-		
+	int_exe(&ampA, INTCODE_RUNMODE_OUTPUT);
+			
 	return 0;
 }

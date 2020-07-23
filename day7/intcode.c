@@ -1,14 +1,15 @@
-#include "intcode.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "intcode.h"
 
-intcomp int_init (char* mem, int in) {
+intcomp int_init (char* mem, int input) {
 
-			printf("exe.....");
-
-	
-	int m[maxmemsize];
+	int* m = malloc(INTCODE_MEMORYSIZE * sizeof(int));
+	if(m==NULL) {
+		printf("failed to malloc intcode memory");
+		abort();
+	}
 	
 	// comma delim string to int array
 	char* toke = strtok(mem, ",");
@@ -19,20 +20,14 @@ intcomp int_init (char* mem, int in) {
 		toke = strtok(NULL, ",");
 	}
 
-	intcomp prog = {m, 0, in, 0};	
+	intcomp prog = {m, 0, input, 0};
 	return prog;
 }
 
-void int_tick (intcomp* m) {
-	//~ printf("
-}
-
-void int_exe (intcomp* m) {
-	
+void int_exe (intcomp* m, int runmode) {
 	
 	int instruction, param1, param2;
 	char opcode[6], ins[3] = { ' ', ' ', (char)0};	
-	
 	
 	// intcode go brrrr
 	while(1) {
@@ -61,36 +56,38 @@ void int_exe (intcomp* m) {
 			break;
 
 			case 3:
-			printf("ptr is %d", m->ptr);
 			m->mem[m->mem[m->ptr+1]] = m->input;			
 			m->ptr+=2;
 			break;
 			
 			case 4:
 			printf("output: %d\n", param1);
-			m->ptr+=2;		
+			m->output = param1;
+			m->ptr+=2;
+			if(runmode==INTCODE_RUNMODE_OUTPUT) return;		
 			break;
 			
 			case 5:
-			printf("ptr is %d", m->ptr);
 			m->ptr = param1 ? param2 : m->ptr + 3;
 			break;
 			
 			case 6: 
-			printf("ptr is %d", m->ptr);
 			m->ptr = param1 ? m->ptr + 3 : param2;
 			break;
 			
 			case 7:
-			printf("ptr is %d", m->ptr);
 			m->mem[m->mem[m->ptr+3]] = param1 < param2 ? 1 : 0;
 			m->ptr += 4;
 			break;
 			
 			case 8:	
-			printf("ptr is %d", m->ptr);
 			m->mem[m->mem[m->ptr+3]] = param1 == param2 ? 1 : 0;
 			m->ptr += 4;
+			break;
+			
+			default:
+			printf("encountered bad opcode (%s). aborting", opcode);
+			abort();
 			break;		
 		}
 	}
