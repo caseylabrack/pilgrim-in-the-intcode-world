@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include "intcode.h"
 
+struct intstruct {
+	int* mem;
+	int ptr;
+	int input;
+	int output;
+};
+
 intcomp int_init (char* mem, int input) {
 
 	int* m = malloc(INTCODE_MEMORYSIZE * sizeof(int));
@@ -19,12 +26,16 @@ intcomp int_init (char* mem, int input) {
 		index++;
 		toke = strtok(NULL, ",");
 	}
-
-	intcomp prog = {m, 0, input, 0};
+	
+	intcomp prog = malloc(sizeof(struct intstruct));
+	prog->mem = m;
+	prog->ptr = 0;
+	prog->input = input;
+	prog->output = 0;
 	return prog;
 }
 
-void int_exe (intcomp* m, int runmode) {
+void int_exe (intcomp m, int runmode) {
 	
 	int instruction, param1, param2;
 	char opcode[6], ins[3] = { ' ', ' ', (char)0};	
@@ -91,4 +102,8 @@ void int_exe (intcomp* m, int runmode) {
 			break;		
 		}
 	}
+}
+
+int int_output (intcomp m) {
+	return m->output;
 }

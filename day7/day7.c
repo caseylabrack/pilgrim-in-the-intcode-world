@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	scanf("%d", &userinput);
 	
 	intcomp ampA = int_init(argv[1], userinput);
-	int_exe(&ampA, INTCODE_RUNMODE_OUTPUT);
+	int_exe(ampA, INTCODE_RUNMODE_HALT);
 			
 	return 0;
 }
