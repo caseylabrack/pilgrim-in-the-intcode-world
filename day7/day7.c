@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "intcode.h"
+#include "intlist.h"
 
 int main(int argc, char **argv)
 {
@@ -18,6 +19,12 @@ int main(int argc, char **argv)
 	
 	intcomp ampA = int_init(argv[1], userinput);
 	int_exe(ampA, INTCODE_RUNMODE_HALT);
-			
+	
+	IntList list = intlist_new(1, intlist_new(2, intlist_new(3, NULL)));
+	intlist_append(4, list);
+	
+	printf("shifted value: %d\n", intlist_shift(&list));
+	intlist_print(list);
+	
 	return 0;
 }

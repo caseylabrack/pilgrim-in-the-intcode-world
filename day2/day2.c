@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	int mem[maxmemsize];
 	for(int i = 0; i < maxmemsize; i++) mem[i] = -1; // initialize
 	
-	// string to int array
+	// comma delim string to int array
 	char* toke = strtok(argv[1], ",");
 	int index = 0;
 	while(toke!=NULL) {
