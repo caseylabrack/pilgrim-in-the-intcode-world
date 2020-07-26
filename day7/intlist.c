@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include "intlist.h"
 
+struct intlist_struct {
+	int head;
+	struct intlist_struct* tail;
+};
+
 IntList intlist_new (int data, IntList list) {
 	IntList link = malloc(sizeof(struct intlist_struct));
 	if(link==NULL) abort();
@@ -40,4 +45,19 @@ void intlist_print (IntList list) {
 		return intlist_print(list->tail);
 	} 
 	printf("list item: %d\ndone printing\n", list->head);
+}
+
+int intlist_getvalue (IntList list) {
+	return list->head;
+}
+
+IntList intlist_nth (IntList list, int index) {
+	if(index==0) return list;
+	return intlist_nth(list->tail, index-1);
+}
+
+int intlist_length (IntList list) {
+	if(list==NULL) return 0;
+	if(list->tail==NULL) return 1;
+	return 1 + intlist_length(list->tail);
 }

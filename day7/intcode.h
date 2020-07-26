@@ -1,3 +1,5 @@
+// module for evaluating intcode
+
 #ifndef INTCODE_H
 #define INTCODE_H
 
@@ -12,4 +14,4 @@ extern intcomp int_init (char* mem, int input);
 extern void int_exe (intcomp m, int runmode);
 extern int int_output (intcomp m);
 
-#endif /* INTCODE_H */
+#endif // INTCODE_H

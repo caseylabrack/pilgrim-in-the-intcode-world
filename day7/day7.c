@@ -19,11 +19,12 @@ int main(int argc, char **argv)
 	
 	intcomp ampA = int_init(argv[1], userinput);
 	int_exe(ampA, INTCODE_RUNMODE_HALT);
-	
-	IntList list = intlist_new(1, intlist_new(2, intlist_new(3, NULL)));
-	intlist_append(4, list);
-	
-	printf("shifted value: %d\n", intlist_shift(&list));
+
+	IntList list = intlist_new(1, NULL);
+	intlist_append(2, list);
+	intlist_append(3, list);
+	printf("shift out this value: %d\n", intlist_shift(&list));
+	printf("second value is: %d\n", intlist_getvalue(intlist_nth(list, 1)));
 	intlist_print(list);
 	
 	return 0;
