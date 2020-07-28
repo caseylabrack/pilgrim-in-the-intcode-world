@@ -13,11 +13,18 @@ int main(int argc, char **argv)
 		printf("Argument expected: intcode string\n");
 		return 0;
 	}
+
+	int* prog = intcode_memoryParse(argv[1]);
 	
 	int max = 0;
 	int input = 0;
 	int phases[5];
 	intcomp amps[5];
+
+	int* memory[5];
+	for(int l = 0; l < 5; l++) {
+		memory[l] = malloc(INTCODE_MEMORYSIZE * sizeof(int));
+	}
 	
 	for(int a = 0; a < 5; a++) {
 		for(int b = 0; b < 5; b++) {
@@ -27,15 +34,17 @@ int main(int argc, char **argv)
 						phases[0] = a; phases[1] = b; phases[2] = c; phases[3] = d; phases[4] = e;
 						if(arrayHasDupes(phases, 5)) continue;
 						
+						// reuse memory block between iterations
+						for(int c = 0; c < 5; c++) memcpy(memory[c], prog, INTCODE_MEMORYSIZE * sizeof(int));
+	
 						for(int i = 0; i < 5; i++) {
-							amps[i].mem = intcode_memoryParse(argv[1]);
+							amps[i].mem = memory[i];
 							amps[i].ptr = 0;
 							amps[i].phase = phases[i];
 							amps[i].phaseApplyFlag = 1;
 						}
 						
 						input = 0;
-	
 						for(int h = 0; h < 5; h++) {
 							amps[h].input = input;
 							amps[h] = int_exe(amps[h], INTCODE_RUNMODE_OUTPUT);

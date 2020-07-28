@@ -3,7 +3,7 @@
 #ifndef INTCODE_H
 #define INTCODE_H
 
-#define INTCODE_MEMORYSIZE 1000
+#define INTCODE_MEMORYSIZE 100
 // int_exe parameter
 #define INTCODE_RUNMODE_OUTPUT	0 // int_exe yield on output or halt
 #define INTCODE_RUNMODE_HALT	1 // int_exe yield only on halt
