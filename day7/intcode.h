@@ -14,7 +14,7 @@ typedef struct {
 	int input;
 	int output;
 	int phase;
-	int phaseNeeded;
+	int phaseApplyFlag;
 } intcomp;
 
 extern int* intcode_memoryParse (char* mem);

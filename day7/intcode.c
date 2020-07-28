@@ -56,13 +56,12 @@ intcomp int_exe (intcomp m, int runmode) {
 			break;
 
 			case 3:
-			if(m.phaseNeeded==1) {
+			if(m.phaseApplyFlag==1) {
 				m.mem[m.mem[m.ptr+1]] = m.phase;
-				m.phaseNeeded = 0;
+				m.phaseApplyFlag = 0;
 			} else {
 				m.mem[m.mem[m.ptr+1]] = m.input;
 			}
-			//~ m.mem[m.mem[m.ptr+1]] = m.input;			
 			m.ptr+=2;
 			break;
 			
