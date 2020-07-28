@@ -3,23 +3,36 @@
 #include <stdlib.h>
 #include "intcode.h"
 
-struct intstruct {
-	int* mem;
-	int ptr;
-	int input;
-	int output;
-};
+//~ struct intstruct {
+	//~ int* mem;
+	//~ int ptr;
+	//~ int input;
+	//~ int output;
+	//~ int phase;
+	//~ int phaseNeeded;
+//~ };
 
-intcomp int_init (char* mem, int input) {
+//~ intcomp intcode_init_withphase (char* mem, int phase) {
+	//~ intcomp prog = {intcode_memoryParse(mem), 0, 0, 0, phase, 1};
+	//~ return prog;
+//~ }
+
+//~ intcomp intcode_init_withinput (char* mem, int input) {
+	//~ intcomp prog = {intcode_memoryParse(mem), 0, 1, 0, 0, 0};
+	//~ return prog;
+//~ }
+
+int* intcode_memoryParse (char* mem) {
 
 	int* m = malloc(INTCODE_MEMORYSIZE * sizeof(int));
 	if(m==NULL) {
-		printf("failed to malloc intcode memory");
+		printf("failed to malloc intcode memory\n");
 		abort();
 	}
 	
-	// comma delim string to int array
-	char* toke = strtok(mem, ",");
+	char* copy = strdup(mem);
+	
+	char* toke = strtok(copy, ",");
 	int index = 0;
 	while(toke!=NULL) {
 		m[index] = atoi(toke);
@@ -27,15 +40,10 @@ intcomp int_init (char* mem, int input) {
 		toke = strtok(NULL, ",");
 	}
 	
-	intcomp prog = malloc(sizeof(struct intstruct));
-	prog->mem = m;
-	prog->ptr = 0;
-	prog->input = input;
-	prog->output = 0;
-	return prog;
+	return m;
 }
 
-void int_exe (intcomp m, int runmode) {
+void int_exe (intcomp* m, int runmode) {
 	
 	int instruction, param1, param2;
 	char opcode[6], ins[3] = { ' ', ' ', (char)0};	
@@ -50,7 +58,7 @@ void int_exe (intcomp m, int runmode) {
 		
 		if(instruction==99) break;
 		
-		// char to int, then nonzero test
+		// char to int, then test zero or nonzero
 		param1 = opcode[2] - '0' ? m->mem[m->ptr+1] : m->mem[m->mem[m->ptr+1]]; 
 		param2 = opcode[1] - '0' ? m->mem[m->ptr+2] : m->mem[m->mem[m->ptr+2]]; 
 					
@@ -104,6 +112,6 @@ void int_exe (intcomp m, int runmode) {
 	}
 }
 
-int int_output (intcomp m) {
-	return m->output;
-}
+//~ int int_output (intcomp m) {
+	//~ return m->output;
+//~ }
