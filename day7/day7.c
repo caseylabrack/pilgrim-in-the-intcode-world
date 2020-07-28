@@ -15,34 +15,27 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	
-	int phaseSeq[] = {4,2,2,1,0};
-	
-	
 	printf("has dupes? %d\n", arrayHasDupes(phaseSeq, 5));
 	
-	int userinput;
-	printf("\nTEST INPUT: ");
-	scanf("%d", &userinput);
+	int max = 0;
 	
-	//~ int* mem = ;
+	intcomp amps[5];
+	int phases[] = {1,0,4,3,2};
 	
-	intcomp prog = {intcode_memoryParse(argv[1]), 0, userinput, 0, 0, 0};
+	for(int i = 0; i < 5; i++) {
+		intcomp prog = {intcode_memoryParse(argv[1]), 0, 0, 0, phases[i], 1};
+		amps[i] = prog;
+	}
 	
-	//~ int phase = 4;
+	int input = 0;
 	
-	//~ printf("mem is %d...%d...%d...%d...\n", mem[0], mem[1], mem[2], mem[3]);
-	//~ intcomp ampA; 
-	//~ ampA->mem = mem;
-	//~ ampA->ptr = 0;
-	//~ ampA->input = userinput;
-	//~ ampA->output = 0; 
-	//~ ampA->phase = 0;
-	//~ ampA->phaseNeeded = 0;
+	for(int h = 0; h < 5; h++) {
+		amps[h].input = input;
+		amps[h] = int_exe(amps[h], INTCODE_RUNMODE_OUTPUT);
+		input = amps[h].output;
+	}
 	
-	//~ printf("user input is %d\n", ampA->input);
-						
-	//~ int_init(strdup(argv[1]), userinput);
-	int_exe(&prog, INTCODE_RUNMODE_HALT);
+	printf("output: %d\n", amps[4].output);
 	
 	return 0;
 }

@@ -3,25 +3,6 @@
 #include <stdlib.h>
 #include "intcode.h"
 
-//~ struct intstruct {
-	//~ int* mem;
-	//~ int ptr;
-	//~ int input;
-	//~ int output;
-	//~ int phase;
-	//~ int phaseNeeded;
-//~ };
-
-//~ intcomp intcode_init_withphase (char* mem, int phase) {
-	//~ intcomp prog = {intcode_memoryParse(mem), 0, 0, 0, phase, 1};
-	//~ return prog;
-//~ }
-
-//~ intcomp intcode_init_withinput (char* mem, int input) {
-	//~ intcomp prog = {intcode_memoryParse(mem), 0, 1, 0, 0, 0};
-	//~ return prog;
-//~ }
-
 int* intcode_memoryParse (char* mem) {
 
 	int* m = malloc(INTCODE_MEMORYSIZE * sizeof(int));
@@ -43,7 +24,7 @@ int* intcode_memoryParse (char* mem) {
 	return m;
 }
 
-void int_exe (intcomp* m, int runmode) {
+intcomp int_exe (intcomp m, int runmode) {
 	
 	int instruction, param1, param2;
 	char opcode[6], ins[3] = { ' ', ' ', (char)0};	
@@ -51,7 +32,7 @@ void int_exe (intcomp* m, int runmode) {
 	// intcode go brrrr
 	while(1) {
 		
-		sprintf(opcode, "%05d", m->mem[m->ptr]);
+		sprintf(opcode, "%05d", m.mem[m.ptr]);
 		ins[0] = opcode[3];
 		ins[1] = opcode[4];
 		sscanf(ins, "%d", &instruction);
@@ -59,49 +40,55 @@ void int_exe (intcomp* m, int runmode) {
 		if(instruction==99) break;
 		
 		// char to int, then test zero or nonzero
-		param1 = opcode[2] - '0' ? m->mem[m->ptr+1] : m->mem[m->mem[m->ptr+1]]; 
-		param2 = opcode[1] - '0' ? m->mem[m->ptr+2] : m->mem[m->mem[m->ptr+2]]; 
+		param1 = opcode[2] - '0' ? m.mem[m.ptr+1] : m.mem[m.mem[m.ptr+1]]; 
+		param2 = opcode[1] - '0' ? m.mem[m.ptr+2] : m.mem[m.mem[m.ptr+2]]; 
 					
 		switch(instruction) {
 			
 			case 1: 
-			m->mem[m->mem[m->ptr+3]] = param1 + param2;
-			m->ptr+=4;
+			m.mem[m.mem[m.ptr+3]] = param1 + param2;
+			m.ptr+=4;
 			break;
 			
 			case 2:
-			m->mem[m->mem[m->ptr+3]] = param1 * param2;
-			m->ptr+=4;
+			m.mem[m.mem[m.ptr+3]] = param1 * param2;
+			m.ptr+=4;
 			break;
 
 			case 3:
-			m->mem[m->mem[m->ptr+1]] = m->input;			
-			m->ptr+=2;
+			if(m.phaseNeeded==1) {
+				m.mem[m.mem[m.ptr+1]] = m.phase;
+				m.phaseNeeded = 0;
+			} else {
+				m.mem[m.mem[m.ptr+1]] = m.input;
+			}
+			//~ m.mem[m.mem[m.ptr+1]] = m.input;			
+			m.ptr+=2;
 			break;
 			
 			case 4:
-			printf("output: %d\n", param1);
-			m->output = param1;
-			m->ptr+=2;
-			if(runmode==INTCODE_RUNMODE_OUTPUT) return;		
+			//~ printf("output: %d\n", param1);
+			m.output = param1;
+			m.ptr+=2;
+			if(runmode==INTCODE_RUNMODE_OUTPUT) return m;		
 			break;
 			
 			case 5:
-			m->ptr = param1 ? param2 : m->ptr + 3;
+			m.ptr = param1 ? param2 : m.ptr + 3;
 			break;
 			
 			case 6: 
-			m->ptr = param1 ? m->ptr + 3 : param2;
+			m.ptr = param1 ? m.ptr + 3 : param2;
 			break;
 			
 			case 7:
-			m->mem[m->mem[m->ptr+3]] = param1 < param2 ? 1 : 0;
-			m->ptr += 4;
+			m.mem[m.mem[m.ptr+3]] = param1 < param2 ? 1 : 0;
+			m.ptr += 4;
 			break;
 			
 			case 8:	
-			m->mem[m->mem[m->ptr+3]] = param1 == param2 ? 1 : 0;
-			m->ptr += 4;
+			m.mem[m.mem[m.ptr+3]] = param1 == param2 ? 1 : 0;
+			m.ptr += 4;
 			break;
 			
 			default:
@@ -110,8 +97,6 @@ void int_exe (intcomp* m, int runmode) {
 			break;		
 		}
 	}
+	
+	return m;
 }
-
-//~ int int_output (intcomp m) {
-	//~ return m->output;
-//~ }
