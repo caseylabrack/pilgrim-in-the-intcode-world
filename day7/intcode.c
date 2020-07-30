@@ -37,9 +37,12 @@ intcomp int_exe (intcomp m, int runmode) {
 		ins[1] = opcode[4];
 		sscanf(ins, "%d", &instruction);
 		
-		if(instruction==99) break;
+		if(instruction==99) {
+			m.halted = 1;
+			break;
+		}
 		
-		// char to int, then test zero or nonzero
+		// char to int, then test if zero
 		param1 = opcode[2] - '0' ? m.mem[m.ptr+1] : m.mem[m.mem[m.ptr+1]]; 
 		param2 = opcode[1] - '0' ? m.mem[m.ptr+2] : m.mem[m.mem[m.ptr+2]]; 
 					
@@ -91,7 +94,7 @@ intcomp int_exe (intcomp m, int runmode) {
 			break;
 			
 			default:
-			printf("encountered bad opcode (%s). aborting", opcode);
+			printf("encountered bad opcode (%s). aborting\n", opcode);
 			abort();
 			break;		
 		}
