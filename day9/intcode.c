@@ -7,7 +7,7 @@ long long* intcode_memoryParse (char* mem) {
 
 	long long* m = calloc(INTCODE_MEMORYSIZE, sizeof(long long));
 	if(m==NULL) {
-		printf("failed to malloc intcode memory\n");
+		printf("failed to alloc intcode memory\n");
 		abort();
 	}
 	
@@ -46,10 +46,6 @@ intcomp intcode_exe (intcomp m, int runmode) {
 			break;
 		}
 		
-		// char to int, then test if zero
-		//~ param1 = opcode[2] - '0' ? m.mem[m.ptr+1] : m.mem[m.mem[m.ptr+1]]; 
-		//~ param2 = opcode[1] - '0' ? m.mem[m.ptr+2] : m.mem[m.mem[m.ptr+2]];
-		
 		if(opcode[2] - '0'==1) param1 = m.mem[m.ptr+1];
 		if(opcode[2] - '0'==0) param1 = m.mem[m.mem[m.ptr+1]];
 		if(opcode[2] - '0'==2) param1 = m.mem[m.mem[m.ptr+1]+m.rbase];
@@ -58,42 +54,40 @@ intcomp intcode_exe (intcomp m, int runmode) {
 		if(opcode[1] - '0'==0) param2 = m.mem[m.mem[m.ptr+2]];
 		if(opcode[1] - '0'==2) param2 = m.mem[m.mem[m.ptr+2]+m.rbase];
 
-		param3 = opcode[1] - '0' == 0 ? m.mem[m.ptr+3] : m.mem[m.ptr+3] + m.rbase;
+		param3 = opcode[0] - '0' == 0 ? m.mem[m.ptr+3] : m.mem[m.ptr+3] + m.rbase;
 
 		switch(instruction) {
 			
 			case 1: 
-			//~ m.mem[m.mem[m.ptr+3]] = param1 + param2;
 			m.mem[param3] = param1 + param2;
 			m.ptr+=4;
 			break;
 			
 			case 2:
-			//~ m.mem[m.mem[m.ptr+3]] = param1 * param2;
 			m.mem[param3] = param1 * param2;
 			m.ptr+=4;
 			break;
 
 			case 3:
 			if(m.phaseApplyFlag==1) {
-				m.mem[m.mem[m.ptr+1]] = m.phase;
-				m.phaseApplyFlag = 0;
+				if(opcode[2] - '0' == 0) { // position mode
+					m.mem[m.mem[m.ptr+1]] = m.phase;
+				} else { // relative mode
+					m.mem[m.mem[m.ptr+1]+m.rbase] = m.phase;
+				}
+					m.phaseApplyFlag = 0;
 			} else {
-				//~ m.mem[m.mem[m.ptr+1]] = m.input;
-				//~ m.mem[opcode[2] - '0' == 0 ? m.mem[m.ptr+1] : m.mem[m.ptr+1]+m.rbase] = m.input;
 				if(opcode[2] - '0' == 0) { // position mode
 					m.mem[m.mem[m.ptr+1]] = m.input;
 				} else { // relative mode
 					m.mem[m.mem[m.ptr+1]+m.rbase] = m.input;
-					printf("relative mode input detected: %lli\n", m.rbase);
 				}
 			}
 			m.ptr+=2;
 			break;
 			
 			case 4:
-			printf("output: %lli\n", param1);
-			//~ printf("opcode: %s\n", opcode);
+			//~ printf("output: %lli\n", param1);
 			m.output = param1;
 			m.ptr+=2;
 			if(runmode==INTCODE_RUNMODE_OUTPUT) return m;		
@@ -108,13 +102,11 @@ intcomp intcode_exe (intcomp m, int runmode) {
 			break;
 			
 			case 7:
-			//~ m.mem[m.mem[m.ptr+3]] = param1 < param2 ? 1 : 0;
 			m.mem[param3] = param1 < param2 ? 1 : 0;
 			m.ptr += 4;
 			break;
 			
 			case 8:	
-			//~ m.mem[m.mem[m.ptr+3]] = param1 == param2 ? 1 : 0;
 			m.mem[param3] = param1 == param2 ? 1 : 0;
 			m.ptr += 4;
 			break;
